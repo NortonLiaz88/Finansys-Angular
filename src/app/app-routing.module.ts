@@ -9,6 +9,13 @@ const routes: Routes = [
         (m) => m.CategoriesModule
       ),
   },
+  {
+    path: 'entries',
+    loadChildren: () =>
+      import('./pages/entries/entries.module').then(
+        (m) => m.EntriesModule
+      )
+  }
 ];
 
 @NgModule({
