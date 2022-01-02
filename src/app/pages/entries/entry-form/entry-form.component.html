@@ -2,14 +2,14 @@
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
     <li class="breadcrumb-item"><a routerLink="/entries">Lançamentos</a></li>
-    <li class="breadcrumb-item">{{pageTitle}}</li>
+    <li class="breadcrumb-item">{{ pageTitle }}</li>
   </ol>
 </nav>
 
 <div class="row">
   <div class="col-md">
     <h1 class="h2 border-left pl2">
-      {{pageTitle}}
+      {{ pageTitle }}
     </h1>
   </div>
   <div class="col-md">
@@ -24,7 +24,31 @@
     <div class="card-body">
       <div class="row">
         <div class="form-item col-lg-4 col-md-4 col-sm-12">
-          <label for="name">Nome</label>
+          <label for="type">Tipo</label>
+          <select
+            name="type"
+            id="type"
+            formControlName="type"
+            class="form-control"
+          >
+            <option value="expense">Despesa</option>
+            <option value="revenue">Receita</option>
+          </select>
+
+          <div
+            class="text-danger"
+            *ngIf="
+              entryForm.get('type').invalid && entryForm.get('type').touched
+            "
+          >
+            <div *ngIf="entryForm.get('type').errors.required">
+              dado obrigatório
+            </div>
+          </div>
+        </div>
+
+        <div class="form-item col-lg-4 col-md-4 col-sm-12">
+          <label for="name">Lançamento</label>
           <input
             formControlName="name"
             type="text"
@@ -34,14 +58,45 @@
           <div
             class="text-danger"
             *ngIf="
-              entryForm.get('name').invalid &&
-              entryForm.get('name').touched
+              entryForm.get('name').invalid && entryForm.get('name').touched
             "
           >
             <div *ngIf="entryForm.get('name').errors.required">
               dado obrigatório
             </div>
             <div *ngIf="entryForm.get('name').errors.minLength">
+              deve ter no mínimo 2 caracteres
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-item col-lg-4 col-md-4 col-sm-12">
+          <label for="name">Valor</label>
+          <div class="input-group">
+            <span class="input-group-text" id="basic-addon1">R$</span>
+            <input
+              type="text"
+              name="amount"
+              id="amount"
+              formControlName="amount"
+              class="form-control"
+              aria-label="amount"
+              aria-describedby="basic-addon1"
+              [imask]="imaskConfig"
+            />
+          </div>
+
+          <div
+            class="text-danger"
+            *ngIf="
+              entryForm.get('amount').invalid && entryForm.get('amount').touched
+            "
+          >
+            <div *ngIf="entryForm.get('amount').errors.required">
+              dado obrigatório
+            </div>
+            <div *ngIf="entryForm.get('amount').errors.minLength">
               deve ter no mínimo 2 caracteres
             </div>
           </div>
@@ -64,7 +119,7 @@
     <strong>Erro no servidor</strong>
     <ul>
       <li *ngFor="let error of serverErrorsMessages">
-        {{error}}
+        {{ error }}
       </li>
     </ul>
   </div>

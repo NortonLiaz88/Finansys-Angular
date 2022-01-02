@@ -23,12 +23,20 @@ export class EntryFormComponent
   implements OnInit, OnDestroy, AfterContentChecked
 {
   public entry: Entry;
-
+  public imaskConfig = {
+    mask: Number,
+    scale: 2,
+    thousandsSeparator: '',
+    padFractionalZeros: true,
+    normalizeZeros: true,
+    radix: ','
+  }
   public currentAction: string;
   public pageTitle: string;
   public serverErrorsMessages: string[] = null;
   public submittingForm: boolean = false;
   public entryForm: FormGroup;
+
   private unsubscribe$ = new Subject<void>();
   constructor(
     private formBuilder: FormBuilder,
