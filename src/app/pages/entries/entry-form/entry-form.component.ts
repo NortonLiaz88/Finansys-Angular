@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  AfterContentChecked,
+  AfterViewChecked,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -11,10 +17,11 @@ import { EntriesService } from '../shared/entries.service';
 @Component({
   selector: 'app-entry-form',
   templateUrl: './entry-form.component.html',
-  styleUrls: ['./entry-form.component.scss']
+  styleUrls: ['./entry-form.component.scss'],
 })
-export class EntryFormComponent implements OnInit {
-
+export class EntryFormComponent
+  implements OnInit, OnDestroy, AfterContentChecked
+{
   public entry: Entry;
 
   public currentAction: string;
@@ -30,7 +37,19 @@ export class EntryFormComponent implements OnInit {
     private entryService: EntriesService,
     private toastrService: ToastrService
   ) {}
+  ngAfterContentChecked(): void {
+    this.setPageTitle();
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
+
   ngOnInit(): void {
+    this.buildCategorForm();
+    this.setCurrentAction();
+    this.loadEntry();
   }
 
   public setCurrentAction(): void {
@@ -47,15 +66,19 @@ export class EntryFormComponent implements OnInit {
       id: [null],
       name: [null, [Validators.required, Validators.minLength(2)]],
       description: [null],
+      categoryId: [null],
+      category: [null],
+      paid: [null],
+      date: [null],
+      amount: [null],
+      type: [null],
     });
   }
 
   public loadEntry(): void {
     if (this.currentAction === 'edit') {
       this.activatedRoute.paramMap
-        .pipe(
-          switchMap((param) => this.entryService.getById(param.get('id')))
-        )
+        .pipe(switchMap((param) => this.entryService.getById(param.get('id'))))
         .subscribe(
           (entry) => {
             this.entry = entry;
@@ -70,10 +93,10 @@ export class EntryFormComponent implements OnInit {
 
   public setPageTitle(): void {
     if (this.currentAction === 'new') {
-      this.pageTitle = 'Cadastro de Categoria';
+      this.pageTitle = 'Cadastro de Lançamento';
     } else {
       const entryName = this.entry?.name || '';
-      this.pageTitle = `Editando Categoria ${entryName}`;
+      this.pageTitle = `Editando Lançamento: ${entryName}`;
     }
   }
 
@@ -118,7 +141,7 @@ export class EntryFormComponent implements OnInit {
 
   private actionsForSuccess(entry: Entry): void {
     this.toastrService.success('Solicitação aceita com sucesso.');
-    this.router.navigate(['categories'], {skipLocationChange: true});
+    this.router.navigate(['entries'], { skipLocationChange: true });
     this.submittingForm = false;
   }
 
@@ -126,11 +149,10 @@ export class EntryFormComponent implements OnInit {
     console.log('Error', error);
     this.toastrService.error('Ocorreu um erro ao processar a solicitação.');
     this.submittingForm = false;
-    if(error.status === 422) {
+    if (error.status === 422) {
       this.serverErrorsMessages = JSON.parse(error._body).errors;
     } else {
       this.serverErrorsMessages = ['Falha na comunicação com o servidor'];
     }
   }
-
 }
