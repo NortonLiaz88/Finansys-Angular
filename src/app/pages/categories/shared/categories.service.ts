@@ -23,10 +23,9 @@ export class CategoriesService {
       .pipe(catchError(this.handleError), map(this.jsonDataToCategory));
   }
 
-
   public create(category: Category): Observable<Category> {
     return this.http
-      .put(this.apiPath, category)
+      .post(this.apiPath, category)
       .pipe(catchError(this.handleError), map(this.jsonDataToCategory));
   }
 
@@ -42,7 +41,7 @@ export class CategoriesService {
   public delete(id: string): Observable<any> {
     const url = `${this.apiPath}/${id}`;
     return this.http
-      .delete(id)
+      .delete(url)
       .pipe(catchError(this.handleError), map(() => null));
   }
 

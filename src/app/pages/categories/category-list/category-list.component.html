@@ -10,9 +10,7 @@
     <h1 class="h2 border-left pl2">Categorias</h1>
   </div>
   <div class="col-md">
-    <a routerLink="new" class="btn btn-success float-end">
-    + Nova Categoria</a
-    >
+    <a routerLink="new" class="btn btn-success float-end"> + Nova Categoria</a>
   </div>
 </div>
 
@@ -24,15 +22,20 @@
     </tr>
   </thead>
   <tbody>
-    <tr>
+    <tr  *ngFor="let category of categories">
       <td>
-        <strong>Lazer</strong>
-        <br>
-        <small>Cinema, parque, praia, etc</small>
+        <strong>{{category.name}}</strong>
+        <br />
+        <small>{{category.description}}</small>
       </td>
       <td>
-      <a [routerLink]="['12', 'edit']" class="btn btn-outline-info btn-sm me-2">Editar</a>
-      <a [routerLink]="['12', 'edit']" class="btn btn-outline-danger btn-sm">Excluir</a>
+        <a
+          [routerLink]="[category.id, 'edit']"
+          class="btn btn-outline-info btn-sm me-2"
+          >Editar</a
+        >
+        <button (click)="deleteCategory(category.id)" class="btn btn-outline-danger btn-sm"
+          >Excluir</button>
       </td>
     </tr>
   </tbody>

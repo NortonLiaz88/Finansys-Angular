@@ -1,6 +1,10 @@
+import { Injectable } from "@angular/core";
 import { InMemoryDbService } from "angular-in-memory-web-api";
 import { Category } from "./pages/categories/shared/category.model";
 
+@Injectable({
+  providedIn: 'root'
+})
 export class InMemoryDataBase implements InMemoryDbService {
   createDb(){
     const categories: Category[] = [
@@ -10,6 +14,6 @@ export class InMemoryDataBase implements InMemoryDbService {
       {id: 4, name: 'Salário', description: 'Recebimento de salários.'},
       {id: 5, name: 'Freelas', description: 'Trabalhos como freelancer.'},
     ]
-    return categories;
+    return {categories};
   }
 }
