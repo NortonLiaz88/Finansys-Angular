@@ -30,7 +30,7 @@ export class CategoryFormComponent
 
   public currentAction: string;
   public pageTitle: string;
-  public serverErrorsMessage: string[] = null;
+  public serverErrorsMessages: string[] = null;
   public submittingForm: boolean = false;
   public categoryForm: FormGroup;
   private unsubscribe$ = new Subject<void>();
@@ -150,5 +150,10 @@ export class CategoryFormComponent
     console.log('Error', error);
     this.toastrService.error('Ocorreu um erro ao processar a solicitação.');
     this.submittingForm = false;
+    if(error.status === 422) {
+      this.serverErrorsMessages = JSON.parse(error._body).errors;
+    } else {
+      this.serverErrorsMessages = ['Falha na comunicação com o servidor'];
+    }
   }
 }

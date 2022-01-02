@@ -60,6 +60,14 @@
     </div>
   </div>
 
+  <div class="alert alert-danger mt-4" *ngIf="serverErrorsMessages">
+    <strong>Erro no servidor</strong>
+    <ul>
+      <li *ngFor="let error of serverErrorsMessages">
+        {{error}}
+      </li>
+    </ul>
+  </div>
   <button
     type="button"
     class="btn btn-primary btn-lg float-end mt-3"
