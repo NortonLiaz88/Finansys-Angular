@@ -31,8 +31,9 @@
             formControlName="type"
             class="form-control"
           >
-            <option value="expense">Despesa</option>
-            <option value="revenue">Receita</option>
+            <option *ngFor="let option of typeOptions" [value]="option.value">
+              {{ option.text }}
+            </option>
           </select>
 
           <div
@@ -102,7 +103,64 @@
           </div>
         </div>
 
-        <div class="form-item col-lg-8 col-md-8 col-sm-12">
+        <div class="form-item col-lg-4 col-md-4 col-sm-12">
+          <label for="name">Data</label>
+          <p-calendar
+            id="date"
+            formControlName="date"
+            inputStyleClass="form-control"
+            class="control"
+            dataType="string"
+            dateFormat="dd/mm/yy"
+            [locale]="ptBr"
+          ></p-calendar>
+        </div>
+      </div>
+      <div class="row categories-row">
+        <div class="form-item col-lg-2 col-md-2 col-sm-12 me-2">
+          <div class="btn-group btn-paid">
+            <label
+              (click)="setPaidValue(true)"
+              class="label"
+              [class.active]="entryForm.get('paid').value === true"
+              class="btn btn-outline-info"
+              >Pago</label
+            >
+            <label
+              (click)="setPaidValue(false)"
+              class="label"
+              [class.active]="entryForm.get('paid').value === false"
+              class="btn btn-outline-info"
+              >Pendente</label
+            >
+          </div>
+        </div>
+
+        <div class="form-item col-lg-3 col-md-3 col-sm-12">
+          <label for="categoryId">Categoria</label>
+          <select
+            class="form-control"
+            formControlName="categoryId"
+            name="categoryId"
+            id="categoryId"
+          >
+            <option *ngFor="let category of categories" [value]="category?.id">
+              {{ category?.name }}
+            </option>
+          </select>
+          <div
+            class="text-danger"
+            *ngIf="
+              entryForm.get('categoryId').invalid &&
+              entryForm.get('categoryId').touched
+            "
+          >
+            <div *ngIf="entryForm.get('categoryId').errors.required">
+              dado obrigatório
+            </div>
+          </div>
+        </div>
+        <div class="form-item col-lg-6 col-md-6 col-sm-12">
           <label for="name">Descrição</label>
           <input
             formControlName="description"

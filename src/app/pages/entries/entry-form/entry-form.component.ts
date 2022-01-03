@@ -1,3 +1,4 @@
+import { Category } from './../../categories/shared/category.model';
 import {
   AfterContentChecked,
   AfterViewChecked,
@@ -23,14 +24,62 @@ export class EntryFormComponent
   implements OnInit, OnDestroy, AfterContentChecked
 {
   public entry: Entry;
+
+  public categories: Category[];
   public imaskConfig = {
     mask: Number,
     scale: 2,
     thousandsSeparator: '',
     padFractionalZeros: true,
     normalizeZeros: true,
-    radix: ','
-  }
+    radix: ',',
+  };
+
+  public ptBr = {
+    firstDayOfWeek: 0,
+    dayNames: [
+      'Domingo',
+      'Segunda',
+      'Terça',
+      'Quarta',
+      'Quinta',
+      'Sexta',
+      'Sábado',
+    ],
+    dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
+    dayNamesMin: ['Do', 'Se', 'Te', 'Qu', 'Qu', 'Se', 'Sa'],
+    monthNames: [
+      'Janeiro',
+      'Fevereiro',
+      'Março',
+      'Abril',
+      'Maio',
+      'Junho',
+      'Julho',
+      'Agosto',
+      'Setembro',
+      'Outubro',
+      'Novembro',
+      'Dezembro',
+    ],
+    monthNamesShort: [
+      'Jan',
+      'Fev',
+      'Mar',
+      'Abr',
+      'Mai',
+      'Jun',
+      'Jul',
+      'Ago',
+      'Set',
+      'Out',
+      'Nov',
+      'Dez',
+    ],
+    today: 'Hoje',
+    clear: 'Limpar',
+  };
+
   public currentAction: string;
   public pageTitle: string;
   public serverErrorsMessages: string[] = null;
@@ -43,7 +92,8 @@ export class EntryFormComponent
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private entryService: EntriesService,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private categoryService: CategoriesService
   ) {}
   ngAfterContentChecked(): void {
     this.setPageTitle();
@@ -58,6 +108,13 @@ export class EntryFormComponent
     this.buildCategorForm();
     this.setCurrentAction();
     this.loadEntry();
+    this.loadCategories();
+  }
+
+  get typeOptions(): Array<any> {
+    return Object.entries(Entry.types).map(([value, text]) => {
+      return { text: text, value: value };
+    });
   }
 
   public setCurrentAction(): void {
@@ -76,10 +133,10 @@ export class EntryFormComponent
       description: [null],
       categoryId: [null],
       category: [null],
-      paid: [null],
+      paid: [true],
       date: [null],
       amount: [null],
-      type: [null],
+      type: ['expense'],
     });
   }
 
@@ -147,6 +204,20 @@ export class EntryFormComponent
       );
   }
 
+  private loadCategories() {
+    this.categoryService
+      .getAll()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        (res) => {
+          this.categories = res;
+        },
+        (err) => {
+          this.actionsForErrors(err);
+        }
+      );
+  }
+
   private actionsForSuccess(entry: Entry): void {
     this.toastrService.success('Solicitação aceita com sucesso.');
     this.router.navigate(['entries'], { skipLocationChange: true });
@@ -162,5 +233,9 @@ export class EntryFormComponent
     } else {
       this.serverErrorsMessages = ['Falha na comunicação com o servidor'];
     }
+  }
+
+  public setPaidValue(currentValue: boolean): void {
+    this.entryForm.get('paid').setValue(currentValue);
   }
 }

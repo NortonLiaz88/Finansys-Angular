@@ -1,0 +1,11 @@
+.control {
+  display: flex;
+  flex-direction: column;
+}
+
+.categories-row{
+  align-items: center !important;
+  .btn-paid {
+    margin-top: 1.5rem;
+  }
+}
