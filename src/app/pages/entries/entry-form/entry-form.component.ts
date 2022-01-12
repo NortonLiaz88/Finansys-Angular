@@ -176,7 +176,7 @@ export class EntryFormComponent
   }
 
   private createEntry(): void {
-    this.entry = Object.assign(new Entry(), this.entryForm.value);
+    this.entry = Entry.fromJson(this.entryForm.value);
     this.entryService
       .create(this.entry)
       .pipe(takeUntil(this.unsubscribe$))
@@ -191,7 +191,7 @@ export class EntryFormComponent
   }
 
   private updateEntry(): void {
-    this.entry = Object.assign(new Entry(), this.entryForm.value);
+    this.entry = Entry.fromJson(this.entryForm.value);
     this.entryService
       .update(this.entry)
       .pipe(takeUntil(this.unsubscribe$))

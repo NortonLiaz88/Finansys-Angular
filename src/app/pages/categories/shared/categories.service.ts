@@ -7,6 +7,6 @@ import { Category } from './category.model';
 })
 export class CategoriesService extends BaseResourceService<Category> {
   constructor(protected injector: Injector) {
-    super('api/categories', injector);
+    super('api/categories', injector, Category.fromJson);
   }
 }
