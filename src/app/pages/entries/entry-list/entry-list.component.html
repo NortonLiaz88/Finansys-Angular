@@ -26,14 +26,14 @@
   <tbody>
     <tr *ngFor="let entry of entries">
       <td>
-        <strong>{{ entry.name }}</strong>
+        <strong>{{ entry?.name }}</strong>
         <br />
-        <small class="text-success">{{ entry.date }}</small>
+        <small class="text-success">{{ entry?.date }}</small>
         <br />
-        <small *ngIf="entity?.description">{{ entry.description }}</small>
+        <small *ngIf="entity?.description">{{ entry?.description }}</small>
       </td>
       <td>
-        {{ entry.category.name }}
+        {{ entry?.category?.name }}
       </td>
       <td class="text-end">
         <strong

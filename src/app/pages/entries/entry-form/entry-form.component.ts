@@ -148,6 +148,7 @@ export class EntryFormComponent
           (entry) => {
             this.entry = entry;
             this.entryForm.patchValue(this.entry);
+            console.log('Entry', entry);
           },
           (err) => {
             console.log('Error');

@@ -1,16 +1,19 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, flatMap, map, mergeMap } from 'rxjs/operators';
+import { CategoriesService } from '../../categories/shared/categories.service';
 import { Entry } from './entries.model';
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class EntriesService {
   private apiPath: string = 'api/entries';
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private categoryService: CategoriesService
+  ) {}
 
   public getAll(): Observable<Entry[]> {
     return this.http
@@ -25,30 +28,41 @@ export class EntriesService {
       .pipe(catchError(this.handleError), map(this.jsonDataToEntry));
   }
 
-  public create(category: Entry): Observable<Entry> {
-    return this.http
-      .post(this.apiPath, category)
-      .pipe(catchError(this.handleError), map(this.jsonDataToEntry));
+  public create(entry: Entry): Observable<Entry> {
+    return this.categoryService.getById(String(entry.categoryId)).pipe(
+      mergeMap((category) => {
+        entry.category = category;
+        return this.http
+          .post(this.apiPath, entry)
+          .pipe(catchError(this.handleError), map(this.jsonDataToEntry));
+      })
+    );
   }
 
+  public update(entry: Entry): Observable<Entry> {
+    const url = `${this.apiPath}/${entry.id}`;
+    return this.categoryService.getById(String(entry.categoryId)).pipe(
+      mergeMap((category) => {
+        entry.category = category;
+        return this.http.put(url, entry).pipe(
+          catchError(this.handleError),
+          map(() => entry)
+        );
+      })
+    );
 
-  public update(category: Entry): Observable<Entry> {
-    const url = `${this.apiPath}/${category.id}`;
-    return this.http
-      .put(url, category)
-      .pipe(catchError(this.handleError), map(() => category));
   }
-
 
   public delete(id: string): Observable<any> {
     const url = `${this.apiPath}/${id}`;
-    return this.http
-      .delete(url)
-      .pipe(catchError(this.handleError), map(() => null));
+    return this.http.delete(url).pipe(
+      catchError(this.handleError),
+      map(() => null)
+    );
   }
 
   private jsonDataToEntry(jsonData: any): Entry {
-    const entries = jsonData as Entry
+    const entries = jsonData as Entry;
     return entries;
   }
 
